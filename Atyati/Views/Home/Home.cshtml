@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Atyati.Models.Employee>
+
+
+
+<h2>Home</h2>
+
+
+<table class="table" id="myTable">
+    <thead>
+        <tr>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.EmployeeId)
+                </th>*@
+            <th>
+                @Html.DisplayName("ID")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.Password)
+                </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>Edit / Delete</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+</table>
+
+@section Menu
+    {
+    @Html.ActionLink("Create New", "Create")
+}
+
+<link href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" rel="stylesheet" />
+@* Load datatable js *@
+@section Scripts{
+    <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            debugger;
+            $('#myTable').DataTable({
+                "ajax": {
+                    "url": "/Home/Index",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns" : [
+                    { "data": "employeeId", "autoWidth": true },
+                    { "data": "firstName", "autoWidth": true },
+                    { "data": "lastName", "autoWidth": true },
+                    { "data": "email", "autoWidth": true },
+                    { "data": "phoneNumber", "autoWidth": true },
+                    {
+                        data: null,
+                        className: "center",
+                        defaultContent: '<a href="" class="editor_edit">Edit</a> / <a href="" class="editor_remove">Delete</a>'
+                    },
+                    {
+                        data: null,
+                        className: "center",
+                        defaultContent: '<a href="" class="editor_Details">Details</a>'
+                    }
+
+                        //{ "data": "City", "autoWidth": true },
+                        //{ "data": "PostalCode", "autoWidth": true }
+                    ]
+            });
+            $('#myTable').on('click', 'a.editor_remove', function (e) {
+                var f = $(this).closest('tr');
+                var id = f[0].cells[0].innerText;
+                var r = confirm("Are You Sure to delete the  record" + f[0].cells[0].innerText);
+                debugger;
+                if (r == true) {
+                    debugger;
+                    e.preventDefault();
+                    console.log(f[0].cells[0].innerText);
+                    console.log(r);
+                    console.log("/Home/Delete?id=" + id);
+                    location.href = "/Home/Delete?id=" + id;
+                } else {
+                    console.log(r);
+                    e.preventDefault();
+                }
+
+
+
+
+            });
+
+            $('#myTable').on('click', 'a.editor_edit', function (e) {
+                e.preventDefault();
+                var f = $(this).closest('tr');
+                var id = f[0].cells[0].innerText;
+                console.log(f[0].cells[0].innerText);
+                location.href = "/Home/Edit?id=" + id;
+            });
+        });
+
+        $('#myTable').on('click', 'a.editor_Details', function (e) {
+            e.preventDefault();
+            var f = $(this).closest('tr');
+            var id = f[0].cells[0].innerText;
+            console.log(f[0].cells[0].innerText);
+            location.href = "/Home/Details?id=" + id;
+        });
+
+
+    </script>
+}
