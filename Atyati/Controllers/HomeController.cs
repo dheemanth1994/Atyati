@@ -13,6 +13,7 @@ namespace Atyati.Controllers
 {
     public class HomeController : Controller
     {
+        AtyatiContext Adb = new AtyatiContext();
         private IEmployeeRepository _employeeRepository;
         public HomeController(IEmployeeRepository employeeRepository)
         {
@@ -56,8 +57,10 @@ namespace Atyati.Controllers
         public IActionResult Home()
         {
 
-          
-            if(string.IsNullOrEmpty(HttpContext.Session.GetString("username")))
+         
+
+
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("username")))
             {
                 return RedirectToAction("Login");
             }
@@ -85,7 +88,10 @@ namespace Atyati.Controllers
             return View(emp);
         
         }
-
+        public IActionResult GetAllProducts()
+        {
+            return View(_employeeRepository.GetAllProducts());
+        }
 
         public IActionResult Index()
         {
@@ -104,16 +110,45 @@ namespace Atyati.Controllers
         public IActionResult Edit(int id)
         {
             ViewBag.Title = "Edit";
-           
-            Employee employee =
+
+            Employees employee =
                    _employeeRepository.GetAllEmployee().Single(emp => emp.EmployeeId == id);
 
             return View(employee);
 
           
         }
+        //public JsonResult getStudent(string id)
+        //{
+        //    List<Student> students = new List<Student>();
+        //    students = context.Students.ToList();
+
+
+        //    return Json(students, JsonRequestBehavior.AllowGet);
+        //}
+        [HttpGet]
+        public IActionResult UpdateStock(int id,bool val)
+        {
+           var p= _employeeRepository.GetAllProducts().SingleOrDefault(x => x.Pid == id);
+            p.IsOutOfStock = val;
+            if (val == true)
+            {
+                p.Quantity = 0;
+            }
+            _employeeRepository.Update(p);
+
+            return View("GetAllProducts", _employeeRepository.GetAllProducts());
+        }
+
+        public IActionResult GetAllProductsAPI()
+        {
+
+            return Json(new { data = _employeeRepository.GetAllProducts() });
+
+        }
+
         [HttpPost]
-        public IActionResult Edit(Employee e)
+        public IActionResult Edit(Employees e)
         {
             if (ModelState.IsValid)
             {
@@ -155,7 +190,7 @@ namespace Atyati.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee e)
+        public IActionResult Create(Employees e)
         {
             if (ModelState.IsValid)
             {
@@ -190,7 +225,58 @@ namespace Atyati.Controllers
 
 
         }
+        [HttpGet]
+        public IActionResult  CreateProduct()
+        {
+            
+            var model = new Product();
 
+            var c = _employeeRepository.GetAllProducts().SingleOrDefault(x => x.Pid == 1).Category;
+            model.Category = c;
+            ViewBag.values = new SelectList(Adb.Category, "CategoryId", "CategoryName"); 
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateProduct(Product prd)
+        {
+            _employeeRepository.AddProduct(prd);
+            return View("GetAllProducts", _employeeRepository.GetAllProducts());
+            //var c = Adb.Category;
+            //ViewBag.Category = new SelectList(Adb.Category, "CategoryId", "CategoryName");
+            //return View();
+        }
+
+
+
+ 
+        [HttpGet]
+        public IActionResult EditProduct(int id)
+        {
+           var model= _employeeRepository.GetAllProducts().Single(x => x.Pid == id);
+
+            ViewBag.values = new SelectList(Adb.Category, "CategoryId", "CategoryName");
+            return View(model);
+            //var c = Adb.Category;
+            //ViewBag.Category = new SelectList(Adb.Category, "CategoryId", "CategoryName");
+            //return View();
+        }
+        [HttpPost]
+        public IActionResult EditProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _employeeRepository.Update(product);
+                return View("GetAllProducts", _employeeRepository.GetAllProducts());
+            }
+            else
+            {
+                ViewBag.values = new SelectList(Adb.Category, "CategoryId", "CategoryName");
+                return View(product);
+            }
+            //var c = Adb.Category;
+            //ViewBag.Category = new SelectList(Adb.Category, "CategoryId", "CategoryName");
+            //return View();
+        }
 
         public IActionResult About()
         {
@@ -216,5 +302,80 @@ namespace Atyati.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        [HttpGet]
+        public IActionResult GetSales()
+        {
+            return View();
+        }
+       
+        [HttpGet]
+        public IActionResult GetSales2()
+        {
+
+            var tdata = _employeeRepository.GetAllTemp();
+            ViewModel vmd = new ViewModel();
+
+
+            vmd.ProductsToBeSold = _employeeRepository.GetAllProducts();
+            vmd.ProductsInCart = tdata;
+            return View("GetSales2", vmd);
+
+
+            //return View("GetSales2", vm);
+        }
+        [HttpPost]
+        public void GetSales3(IEnumerable<TempSales> vm)
+        {
+            int totalPrice = 0;
+            List<TempSales> cartList = new List<TempSales>();
+            ViewModel vmd = new ViewModel();
+            foreach (var v in vm)
+            {
+                     var ep=    _employeeRepository.GetAllTemp().Single(c => c.Pid == v.Pid);
+                if (ep == null)
+                {
+                    var cartProd = _employeeRepository.GetAllProducts().Single(c => c.Pid == v.Pid);
+                    cartProd.Quantity = v.Quantity;
+                    //cartList.Add(cartProd);
+                    //  totalPrice = totalPrice + ((int)cartProd.Price * (int)cartProd.Quantity);
+                    var tData = Converter(cartProd);
+                    _employeeRepository.AddTemp(tData);
+                }
+                else{
+
+                }
+
+            }
+            //ViewBag.TotalPrice = totalPrice;
+
+            ////_employeeRepository.Add(cartList);
+            //vmd.ProductsToBeSold = _employeeRepository.GetAllProducts();
+            //vmd.ProductsInCart = _employeeRepository.GetCart();
+            //GetSales2(vmd, totalPrice);
+
+            //return View("GetSales2", vmd);
+        }
+
+        [HttpPost]
+        public void PassThings(IEnumerable<Thing> things)
+        {
+            // do stuff with things here...
+        }
+
+        public static TempSales Converter(Product p)
+        {
+            return new TempSales
+            {
+                Pid = p.Pid,
+                Name = p.Name,
+                Price = p.Price,
+                Brand = p.Brand,
+                Quantity = p.Quantity,
+                CategoryId = p.CategoryId,
+                IsOutOfStock = p.IsOutOfStock,
+                Category = p.Category
+            };
+        }
+
     }
 }

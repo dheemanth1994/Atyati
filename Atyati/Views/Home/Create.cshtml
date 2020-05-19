@@ -1,4 +1,4 @@
-﻿@model Atyati.Models.Employee
+﻿@model Atyati.Models.Employees
 
 @{
 
@@ -74,9 +74,7 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -84,5 +82,10 @@
 @section Menu
     {
     @Html.ActionLink("Home", "Home")
+    <br />
+    @Html.ActionLink("Product", "GetAllProducts")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
+
 
 }

@@ -1,4 +1,4 @@
-﻿@model Atyati.Models.Employee
+﻿@model Atyati.Models.Employees
 
 @{
     ViewData["Title"] = "Edit";
@@ -73,13 +73,13 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<
 
 @section Menu
     {
     @Html.ActionLink("Home", "Home")
     <br />
     @Html.ActionLink("Create New", "Create")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
 }

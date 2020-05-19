@@ -51,7 +51,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Atyati</a>
+                <a asp-area="" asp-controller="Home" asp-action="Home" class="navbar-brand">Atyati</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -69,8 +69,10 @@
                   @RenderSection("Menu")
 
         </div>
-        <div class="container body-content" style="margin-left:5%">
-            @RenderBody()
+        <div class="container body-content " style="margin-left:5%">
+            <div col-sm-12>
+                @RenderBody()
+            </div>
             <hr />
             <footer>
                 <p>&copy; 2020 - Atyati</p>

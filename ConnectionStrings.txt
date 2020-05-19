@@ -1,0 +1,36 @@
+atyati20200511090059dbserver.database.windows.net
+ananddheemanth@gmail.com@atyati20200511090059dbserver
+
+Server=  (localdb)\\MSSQLLocalDB;Database=Atyati;Trusted_Connection=True;MultipleActiveResultSets=true
+
+Data Source=tcp:atyati20200511090059dbserver.database.windows.net,1433;Initial Catalog=Atyati20200511090059_db;Integrated Security=False;Persist Security Info=False;User ID=ananddheemanth@gmail.com@atyati20200511090059dbserver;Password=Subbu14146
+
+ This does'nt work "DefaultConnection": "Server=  (localdb)\\MSSQLLocalDB;Database=Atyati;Trusted_Connection=True;MultipleActiveResultSets=true"
+"DefaultConnection": "Data Source=tcp:atyati20200511090059dbserver.database.windows.net,1433;Initial Catalog=Atyati20200511090059_db;Integrated Security=False;Persist Security Info=False;User ID=ananddheemanth@gmail.com@atyati20200511090059dbserver;Password=Subbu1146"
+
+ "DefaultConnection": "Data Source=DESKTOP-KBKQF12\\DEEMU;Database=Atyati;Trusted_Connection=true"
+Scaffold-DbContext "Server=DESKTOP-KBKQF12\DEEMU;Database=Atyati;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+
+Scaffold-DbContext "Server=DESKTOP-KBKQF12\DEEMU;Database=Atyati;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+Scaffold-DbContext "Server=DESKTOP-KBKQF12\DEEMU;Database=Atyati;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force (to keep models in sync with db )
+
+
+            var result = from p in context.Product
+                         join ct in context.Category
+                         on p.CategoryId equals ct.CategoryId
+                         select new Product
+                         {
+                             Pid=p.Pid,
+                             Category=ct,
+                             Name=p.Name,
+                             Price=p.Price,
+                             Quantity=p.Quantity,
+                             IsOutOfStock=p.IsOutOfStock,
+                             Brand=p.Brand,
+                              CategoryId=ct.CategoryId
+
+                         };
+
+-Force
+var editor; // use a global for the submit and return data rendering in the examples

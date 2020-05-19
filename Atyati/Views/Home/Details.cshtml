@@ -1,4 +1,4 @@
-﻿@model Atyati.Models.Employee
+﻿@model Atyati.Models.Employees
 
 @{
     ViewData["Title"] = "Details";
@@ -76,5 +76,10 @@
 @section Menu
     {
     @Html.ActionLink("Home", "Home")
+    <br />
+    @Html.ActionLink("Product", "GetAllProducts")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
+
 
 }

@@ -1,0 +1,149 @@
+﻿@model IEnumerable<Atyati.Models.Product>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+@{
+    ViewData["Title"] = "GetAllProducts";
+}
+
+<style>
+</style>
+
+<h2>GetAllProducts</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div margin="2px"><input id="myInput" type="text" placeholder="Search.."></div>
+<div style="max-height: 400px;  overflow: scroll;">
+
+
+    <table class="table" id="#myTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Brand)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsOutOfStock)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Brand)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                        @*@Html.TextBoxFor(modelItem => item.Quantity)*@
+
+                    </td>
+                    <td>
+                        @{
+                            @if (item.IsOutOfStock == true)
+                            {
+                                <input type="checkbox" name="stock" id="stock" checked value=@item.Pid />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="stock" id="stock" value=@item.Pid />
+                            }
+                        }
+                        @*// @Html.DisplayFor(modelItem => item.IsOutOfStock)*@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                    </td>
+                    <td>
+                        <a asp-action="EditProduct" asp-route-id="@item.Pid">Edit</a> |
+                       
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <button type="button" id="fixedbutton" style="margin:8px" class="btn btn-info">Add Product</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#fixedbutton').click(function () {
+            location.href = "/Home/CreateProduct"
+        });
+        //$("#CheckAll").click(function () {
+        //    if ($("#CheckAll").prop("checked") == true) {
+        //        $('input[name=stock]').prop("checked", true);
+
+
+        //    }
+        //    else {
+        //        $('input[name=stock]').prop("checked", false);
+        //    }
+        //})
+        $('input[name=stock]').click(function (e) {
+            debugger;
+            var val = $(this).val();  
+
+
+            if ($(this).is(':checked')) {
+
+                location.href = "/Home/UpdateStock?id=" + val + "&val=" + true;
+            }
+            else {
+                debugger;
+                alert("Update Current quantity to get Items in Stock");
+                $('input[name=stock]').prop("checked", true);
+                location.href = "/Home/UpdateStock?id=" + val + "&val=" + false;
+                
+            }
+        });
+
+    })
+
+    //});
+
+</script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        $("#myInput").on("keyup", function () {
+            debugger;
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+@section Menu
+    {
+    @Html.ActionLink("Home", "Home")
+    <br />
+    @Html.ActionLink("Create New", "Create")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
+
+}

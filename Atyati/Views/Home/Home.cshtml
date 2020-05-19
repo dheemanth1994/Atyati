@@ -1,11 +1,13 @@
-﻿@model IEnumerable<Atyati.Models.Employee>
+﻿@model IEnumerable<Atyati.Models.Employees>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.21/datatables.min.css" />
 
 
 
 <h2>Home</h2>
 
 
-<table class="table" id="myTable">
+<table class="table responsive" id="myTable">
     <thead>
         <tr>
             @*<th>
@@ -38,24 +40,38 @@
 @section Menu
     {
     @Html.ActionLink("Create New", "Create")
+    <br>
+    @Html.ActionLink("Product", "GetAllProducts")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
+
+
 }
 
 <link href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" rel="stylesheet" />
 @* Load datatable js *@
 @section Scripts{
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-
-
+    <script src="~/datatables.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.21/datatables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.4/js/responsive.bootstrap.min.js"></script>
     <script>
+
         $(document).ready(function () {
             debugger;
             $('#myTable').DataTable({
+
                 "ajax": {
                     "url": "/Home/Index",
                     "type": "GET",
                     "datatype": "json"
                 },
-                "columns" : [
+                "columns": [
                     { "data": "employeeId", "autoWidth": true },
                     { "data": "firstName", "autoWidth": true },
                     { "data": "lastName", "autoWidth": true },
@@ -72,9 +88,10 @@
                         defaultContent: '<a href="" class="editor_Details">Details</a>'
                     }
 
-                        //{ "data": "City", "autoWidth": true },
-                        //{ "data": "PostalCode", "autoWidth": true }
-                    ]
+                    //{ "data": "City", "autoWidth": true },
+                    //{ "data": "PostalCode", "autoWidth": true }
+                ],
+                responsive: true,
             });
             $('#myTable').on('click', 'a.editor_remove', function (e) {
                 var f = $(this).closest('tr');

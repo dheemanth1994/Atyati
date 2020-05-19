@@ -1,0 +1,291 @@
+﻿@model Atyati.Models.ViewModel
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Produts to WishList</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="max-height: 400px;  overflow: scroll;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Brand</th>
+                                <th>Qty</th>
+                                <th>Availablity</th>
+                                <th>Sell</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ProductsToBeSold)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+
+                                        @*<a asp-action="Edit" asp-route-id="@item.CartId">Edit</a> |
+                                            <a asp-action="Details" asp-route-id="@item.CartId">Details</a> |
+                                            <a asp-action="Delete" asp-route-id="@item.CartId">Delete</a>*@
+                                    </td>
+
+                                    <td id="p.@item.Pid">
+                                        @Html.DisplayFor(modelItem => item.Price, new { id = "p" + item.Pid })
+
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Brand)
+                                    </td>
+                                    <td>
+                                        @*@Html.DisplayFor(modelItem => item.Quantity,new { id = "qtys" + item.Pid })*@
+                                        @Html.TextBoxFor(modelItem => item.Quantity, new { type = "number", disabled = "disabled", id = "qty" + item.Pid, width = "20px", min = "1", max = item.Quantity, @onchange = "onchangeevent(" + item.Quantity + "," + "qty" + item.Pid + "," + item.Price + "," + item.Pid + ")" })
+                                    </td>
+
+                                    <td>
+                                        @{
+                                            @if (item.IsOutOfStock == true)
+                                            {
+                                                <text>Out Of Stock</text>
+                                            }
+                                            else
+                                            {
+                                                <text>In Stock</text>
+                                            }
+                                        }
+                                        @*// @Html.DisplayFor(modelItem => item.IsOutOfStock)*@
+                                    </td>
+                                    <td>
+                                        @{
+                                            @if (item.IsOutOfStock == true)
+                                            {
+                                                <input type="checkbox" disabled name="stock" id="stock" value=@item.Pid />
+
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" name="stock" id="stock" value=@item.Pid />
+
+                                            }
+                                        }
+
+                                    </td>
+                                    <td id="tp.@item.Pid"></td>
+                                </tr>
+
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <input type="button" class="btn btn-primary" id="submit" name="Add to Cart" value="Add to Cart" />
+            </div>
+            <div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Price</th>
+            <th>Brand</th>
+            <th>Qty</th>
+            <th>Complete Sale</th>
+            <th>Reject</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ProductsInCart != null)
+        {
+            @foreach (var item in Model.ProductsInCart)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td id="p.@item.Pid">
+                @Html.DisplayFor(modelItem => item.Price, new { id = "pc" + item.Pid })
+
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity, new { id = "qtysc" + item.Pid })
+                @*@Html.TextBoxFor(modelItem => item.Quantity, new { type = "number", disabled = "disabled", id = "qty" + item.Pid, width = "20px", min = "1", max = item.Quantity, @onchange = "onchangeevent(" + item.Quantity + "," + "qty" + item.Pid + "," + item.Price + "," + item.Pid + ")" })*@
+            </td>
+
+
+
+            
+            <td>
+                <input type="button" class="btn btn-primary" id="CompleteSale'@item.Pid'" OnClientClick="Sold(@item.Pid)" value="Complete" name="Complete" />
+            </td>
+
+            <td>
+                <input type="button" class="btn btn-primary" id="Delete'@item.Pid'" OnClientClick="Reject(@item.Pid)"  value="Delete" name="Delete" />
+            </td>
+        </tr>
+
+
+            }
+        }
+        else
+        {
+            <tr>
+                No Cart Added
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input type="button" class="btn btn-primary" id="submitSales" data-toggle="modal" data-target="#myModal" value="Add to Sales" name="Add to Sales" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section Menu
+    {
+    @Html.ActionLink("Home", "Home")
+    <br />
+    @Html.ActionLink("Create New", "Create")
+    <br />
+    @Html.ActionLink("Sales", "GetSales")
+
+}
+
+<script>
+    $('input[name=stock]').click(function (e) {
+        debugger;
+        var Qid = 'qty' + $(this).val();
+
+
+
+        //info[0] = 'hi';
+        //info[1] = 'hello';
+        //info = JSON.stringify(info);
+
+
+
+
+
+
+
+        if ($(this).is(':checked')) {
+            debugger
+            $('#' + Qid).prop('disabled', false);
+            //$('#' + 'tp' + $(this).val()).html('changed value');
+            var tp = 'tp.'+$(this).val();
+           // $('#tp.5').text('1000');
+            var p = 'p' +'.'+ $(this).val();
+            var price = document.getElementById(p).innerHTML;
+            var qty = document.getElementById(Qid).value;
+
+            //price*
+           total= price * qty;
+            document.getElementById('tp.' + $(this).val()).innerHTML = total;
+            //location.href = "/Home/UpdateStock?id=" + val + "&val=" + true;
+        }
+        else {
+            debugger;
+
+            $('#' + Qid).prop('disabled', true);
+            document.getElementById('tp.' + $(this).val()).innerHTML = "";
+        }
+    });
+    //$('input[name=stock]').change(function ())
+    $('#submit').click(function () {
+        debugger;
+        let product = { pid: "", quantity: "" };
+        const vm = [];
+        //let array = new Array(product);
+        $.each($("input[name='stock']:checked"), function () {
+            debugger;
+            product.pid = $(this).val();
+            var q='qty' + $(this).val();
+            product.quantity = $('#' + q).val();
+            vm.push(JSON.parse(JSON.stringify(product)));
+
+
+        });
+        console.log(vm);
+        $.post('@Url.Action("GetSales3")', { vm: vm },
+   function () {
+       $('#result').html('"PassThings()" successfully called.');
+       location.reload()
+
+
+   });
+    });
+
+
+
+
+    function onchangeevent(e, f, price,pid) {
+        debugger;
+        var s = f.id;
+        debugger;
+        var v = $('#' + s).val();
+        if (v > e) {
+            $('#' + s).val(e);
+            alert("value cannot exceed than available quantity");
+        }
+        else {
+            //var val= $(this).val()
+            document.getElementById('tp.' + pid).innerHTML = price * v;
+            //document.getElementById('tp.'+val).innerHTML = "hii"
+
+        }
+
+
+
+    }
+
+
+</script>
+<script>
+    function Sold(pid)
+    {
+        debugger;
+        alert('The Item Sold')
+    }
+    function Reject(pid) {
+        debugger;
+
+        alert('The Item Cancelled')
+    }
+</script>
