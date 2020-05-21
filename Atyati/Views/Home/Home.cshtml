@@ -1,41 +1,111 @@
 ﻿@model IEnumerable<Atyati.Models.Employees>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.21/datatables.min.css" />
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Category);
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TotalPrice);
 
+    var XLabelsSold = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Product);
+    var YValuesSold = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProductTotalPrice);
+
+}
+
+<style>
+    .customDiv {
+        margin: 1px;
+        /*min-height: 300px;*/
+        /*max-height: 400px;*/
+        text-align: center;
+        font-size: large;
+           
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.21/datatables.min.css" />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap Example</title>
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="CustomStyles.css" rel="stylesheet" />
 
 
 <h2>Home</h2>
 
 
-<table class="table responsive" id="myTable">
-    <thead>
-        <tr>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.EmployeeId)
-                </th>*@
-            <th>
-                @Html.DisplayName("ID")
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.Password)
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>Edit / Delete</th>
-            <th>Details</th>
-        </tr>
-    </thead>
-</table>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="customDiv">Category Chart</div>
+        <div class="chart-container">
+            <canvas id="chartPie" style="height:500px"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-5 ">
+
+
+        <div class="customDiv">
+
+            <div class="chart-container">
+                <canvas id="chart" style=" height:500px"></canvas>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-md-2" style="background-color:green;">
+
+
+        <div class="customDiv" style="vertical-align: text-top;">Total Sales</div>
+        <b style="padding:50px">@ViewBag.Sum</b>
+    </div>
+</div>
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <table class="table responsive" id="myTable">
+            <thead>
+                <tr>
+                    @*<th>
+                            @Html.DisplayNameFor(model => model.EmployeeId)
+                        </th>*@
+                    <th>
+                        @Html.DisplayName("ID")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    @*<th>
+                            @Html.DisplayNameFor(model => model.Password)
+                        </th>*@
+                    <th>
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                    </th>
+                    <th>Edit / Delete</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+
 
 @section Menu
     {
@@ -135,3 +205,156 @@
 
     </script>
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+        $(function () {
+    var chartName = "chart";
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var data = {
+                labels: @Html.Raw(XLabels),
+                datasets: [{
+                    label: "Category Chart",
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderWidth: 1,
+                    data: @Html.Raw(YValues)
+    }]
+            };
+
+var options = {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,164,0.2)"
+                        }
+}],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+       var myChart = new  Chart(ctx, {
+                options: options,
+                data: data,
+                type:'line'
+
+            });
+        });
+</script>
+<script type="text/javascript">
+
+        $(function () {
+            var chartName = "chartPie";
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var data = {
+                labels: @Html.Raw(XLabelsSold),
+                datasets: [{
+                    label: "Product Chart",
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 0, 0)',
+                        'rgba(0, 255, 0)',
+                        'rgba(0, 0, 255)',
+                        'rgba(192, 192, 192)',
+                        'rgba(255, 255, 0)',
+                        'rgba(255, 0, 255)'
+                    ],
+                    borderWidth: 1,
+                    data: @Html.Raw(YValuesSold)
+    }]
+            };
+
+var options = {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,164,0.2)"
+                        }
+}],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+       var myChart = new  Chart(ctx, {
+                options: options,
+                data: data,
+                type:'pie'
+
+            });
+        });
+</script>
+Result

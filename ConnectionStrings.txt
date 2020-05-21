@@ -16,21 +16,55 @@ Scaffold-DbContext "Server=DESKTOP-KBKQF12\DEEMU;Database=Atyati;Trusted_Connect
 Scaffold-DbContext "Server=DESKTOP-KBKQF12\DEEMU;Database=Atyati;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force (to keep models in sync with db )
 
 
-            var result = from p in context.Product
-                         join ct in context.Category
-                         on p.CategoryId equals ct.CategoryId
-                         select new Product
-                         {
-                             Pid=p.Pid,
-                             Category=ct,
-                             Name=p.Name,
-                             Price=p.Price,
-                             Quantity=p.Quantity,
-                             IsOutOfStock=p.IsOutOfStock,
-                             Brand=p.Brand,
-                              CategoryId=ct.CategoryId
 
-                         };
 
--Force
+
+ 
+
+
 var editor; // use a global for the submit and return data rendering in the examples
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
+namespace Atyati.Models
+{
+    public partial class Employees
+    {
+        [Key]
+        public int EmployeeId { get; set; }
+
+        [Required]
+        [Display(Name = "Employee Name")]
+        public string FirstName { get; set; }
+        [Required]
+        [Display(Name = "Middle Name")]
+        public string MiddleName { get; set; }
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        [Required]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+        [Required]
+        public int? Salary { get; set; }
+        [Required]
+        public string Role { get; set; }
+        public DateTime? StartDate { get; set; }
+        public string DepartmentName { get; set; }
+        [NotMapped]
+        public List<SelectListItem> DepartmentNames { get; } = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "IT", Text = "IT" },
+        new SelectListItem { Value = "HR", Text = "HR" },
+        new SelectListItem { Value = "PMO", Text = "PMO"  },
+    };
+    }
+}

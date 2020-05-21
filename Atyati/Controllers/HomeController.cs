@@ -8,6 +8,8 @@ using Atyati.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections;
+
 
 namespace Atyati.Controllers
 {
@@ -67,8 +69,15 @@ namespace Atyati.Controllers
             ViewBag.Title = "HOME";
 
            var data = _employeeRepository.GetAllEmployee();
-           // Console.WriteLine(data[0].Department);
-           
+            // Console.WriteLine(data[0].Department);
+           ViewBag.TotalPrice = Chart().Select(x=>x.TotalPrice).ToList();
+            ViewBag.Category = Chart().Select(x => x.CategoryName).ToList();
+            ViewBag.Sum = Chart().Sum(x => x.TotalPrice);
+
+            ViewBag.Product = _employeeRepository.GetAllSold().Select(z=>z.Name).ToList();
+            ViewBag.ProductTotalPrice = _employeeRepository.GetAllSold().Select(z => (z.Price*z.Quantity)).ToList();
+       
+
             return View(_employeeRepository.GetAllEmployee());
 
         }
@@ -305,7 +314,9 @@ namespace Atyati.Controllers
         [HttpGet]
         public IActionResult GetSales()
         {
-            return View();
+            ViewBag.Sum = Chart().Sum(x => x.TotalPrice);
+
+            return View(_employeeRepository.GetAllSold());
         }
        
         [HttpGet]
@@ -331,7 +342,7 @@ namespace Atyati.Controllers
             ViewModel vmd = new ViewModel();
             foreach (var v in vm)
             {
-                     var ep=    _employeeRepository.GetAllTemp().Single(c => c.Pid == v.Pid);
+                     var ep=    _employeeRepository.GetAllTemp().SingleOrDefault(c => c.Pid == v.Pid);
                 if (ep == null)
                 {
                     var cartProd = _employeeRepository.GetAllProducts().Single(c => c.Pid == v.Pid);
@@ -356,11 +367,7 @@ namespace Atyati.Controllers
             //return View("GetSales2", vmd);
         }
 
-        [HttpPost]
-        public void PassThings(IEnumerable<Thing> things)
-        {
-            // do stuff with things here...
-        }
+  
 
         public static TempSales Converter(Product p)
         {
@@ -375,6 +382,75 @@ namespace Atyati.Controllers
                 IsOutOfStock = p.IsOutOfStock,
                 Category = p.Category
             };
+        }
+
+        public static Sold Converter(TempSales p)
+        {
+            return new Sold
+            {
+                Pid = p.Pid,
+                Name = p.Name,
+                Price = p.Price,
+                Brand = p.Brand,
+                Quantity = p.Quantity,
+                CategoryId = p.CategoryId,
+             
+                Category = p.Category
+            };
+        }
+
+        [HttpPost]
+        public void ConfirmSale(TempSales tempsales)
+        {
+            var sData = _employeeRepository.GetAllTemp().Single(x=>x.Pid== tempsales.Pid);
+            _employeeRepository.AddSales(Converter(sData));
+            _employeeRepository.DeleteTemp(sData.Pid);
+            //var sData = _employeeRepositor.Ge .Single(x => x.Pid == tempsales.Pid);
+            var p=_employeeRepository.GetAllProducts().Single(x => x.Pid == tempsales.Pid);
+            p.Quantity = 0;
+            p.IsOutOfStock = true;
+            _employeeRepository.Update(p);
+            GetSales();
+        }
+
+
+        [HttpPost]
+        public void Reject(TempSales tempsales)
+        {
+            var sData = _employeeRepository.GetAllTemp().Single(x => x.Pid == tempsales.Pid);
+
+            _employeeRepository.DeleteTemp(sData.Pid);
+            GetSales();
+        }
+        
+       public List<GetStats> Chart()
+        {
+            List<GetStats> al = new List<GetStats>();
+            
+        var GrpData  =  from data in _employeeRepository.GetAllSold()
+            group data by data.Category.CategoryName into eGroup
+            orderby eGroup.Key
+            select new 
+            {
+                Category= eGroup.Key,
+                subData= eGroup.OrderBy(x=>x.Price)
+
+            };
+
+            foreach(var grp in GrpData )
+            {
+                GetStats gt = new GetStats();
+                gt.CategoryName  = grp.Category;
+                foreach (var p in grp.subData)
+                {
+                   gt.TotalPrice= gt.TotalPrice+Convert.ToInt32(p.Price * p.Quantity);
+
+                }
+                al.Add(gt);
+
+            }
+            Console.WriteLine(al);
+            return al;
         }
 
     }

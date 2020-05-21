@@ -12,7 +12,6 @@ namespace Atyati.Models
         public int? Quantity { get; set; }
         public int? CategoryId { get; set; }
         public bool? IsOutOfStock { get; set; }
-
         public Category Category { get; set; }
     }
 }

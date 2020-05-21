@@ -23,5 +23,7 @@ namespace Atyati.Models
         TempSales AddTemp(TempSales tempProd);
         TempSales DeleteTemp(int Pid);
         TempSales GetTemp(int Pid);
+        void AddSales(Sold sold);
+        IEnumerable<Sold> GetAllSold();
     }
 }

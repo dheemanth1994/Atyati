@@ -165,6 +165,35 @@ namespace Atyati.Models
             return result;
 
         }
+
+
+        public IEnumerable<Sold>GetAllSold()
+        {
+            var result = from p in context.Sold
+                         join ct in context.Category
+                         on p.CategoryId equals ct.CategoryId
+                         select new Sold
+                         {
+                             Pid = p.Pid,
+                             Category = ct,
+                             Name = p.Name,
+                             Price = p.Price,
+                             Quantity = p.Quantity,                    
+                             Brand = p.Brand,
+                             CategoryId = ct.CategoryId
+
+                         };
+            return result;
+
+        }
+
+
+        public void AddSales(Sold sold)
+        {
+            context.Sold.Add(sold);
+            context.SaveChanges();
+            
+        }
     }
     }
 

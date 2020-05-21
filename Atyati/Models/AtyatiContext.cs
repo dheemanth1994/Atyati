@@ -21,7 +21,8 @@ namespace Atyati.Models
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<Sold> Sold { get; set; }
         public virtual DbSet<TempSales> TempSales { get; set; }
-
+       
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -119,7 +120,9 @@ namespace Atyati.Models
             {
                 entity.HasKey(e => e.Pid);
 
-                entity.Property(e => e.Pid).HasColumnName("PID");
+                entity.Property(e => e.Pid)
+                    .HasColumnName("PID")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Brand).HasMaxLength(50);
 

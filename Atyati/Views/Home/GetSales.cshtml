@@ -65,6 +65,10 @@
 <div>
     <button type="button" id="fixedbutton" style="margin:2px" class="btn btn-info">Add New to Cart </button>
 </div>
+
+<div>
+    <span> <b>Total Price:</b> @ViewBag.Sum</span>
+</div>
 <script>
     $('#fixedbutton').click(function () {
         /**/
@@ -87,8 +91,8 @@
     @Html.ActionLink("Home", "Home")
     <br />
     @Html.ActionLink("Create New", "Create")
-    <br />
-    @Html.ActionLink("Create New", "Create")
+    <br>
+    @Html.ActionLink("Product", "GetAllProducts")
     <br />
     @Html.ActionLink("Sales", "GetSales")
 }
