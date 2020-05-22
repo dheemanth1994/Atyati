@@ -68,3 +68,11 @@ namespace Atyati.Models
     };
     }
 }
+
+
+
+Git to Replace
+$ git add -A
+$ git commit -m commit3
+$ git push origin master
+

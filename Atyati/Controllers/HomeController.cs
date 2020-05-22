@@ -407,8 +407,12 @@ namespace Atyati.Controllers
             _employeeRepository.DeleteTemp(sData.Pid);
             //var sData = _employeeRepositor.Ge .Single(x => x.Pid == tempsales.Pid);
             var p=_employeeRepository.GetAllProducts().Single(x => x.Pid == tempsales.Pid);
-            p.Quantity = 0;
-            p.IsOutOfStock = true;
+            p.Quantity = p.Quantity - sData.Quantity;
+            if (p.Quantity == 0)
+            {
+                p.IsOutOfStock = true;
+
+            }
             _employeeRepository.Update(p);
             GetSales();
         }
